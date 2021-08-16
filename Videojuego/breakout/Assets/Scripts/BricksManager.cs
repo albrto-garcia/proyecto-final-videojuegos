@@ -38,7 +38,9 @@ public class BricksManager : MonoBehaviour
 
     public Sprite[] Sprites;
 
-    public Color[] BrickColors;
+    public Sprite[] BGSprites;
+
+    public Color[] BrickColors, BrickColors2, BrickColors3;
 
     public List<Brick> RemainingBricks { get; set; }
 
@@ -48,9 +50,21 @@ public class BricksManager : MonoBehaviour
 
     public int CurrentLevel;
 
+    private SpriteRenderer BGSpriteRenderer;
+
     private void Start()
     {
         this.bricksContainer = new GameObject("BricksContainer");
+        BGSpriteRenderer = GameObject.Find("Background").GetComponent<SpriteRenderer>();
+
+        if(this.CurrentLevel < 5)
+            BGSpriteRenderer.sprite = BGSprites[0];
+        else
+            if(this.CurrentLevel < 10)
+                BGSpriteRenderer.sprite = BGSprites[1];
+            else
+                BGSpriteRenderer.sprite = BGSprites[2];
+
         this.LevelsData = this.LoadLevelsData();
         this.GenerateBricks();
     }
@@ -65,6 +79,14 @@ public class BricksManager : MonoBehaviour
         }
         else
         {
+            if(this.CurrentLevel < 5)
+                BGSpriteRenderer.sprite = BGSprites[0];
+            else
+                if(this.CurrentLevel < 10)
+                    BGSpriteRenderer.sprite = BGSprites[1];
+                else
+                    BGSpriteRenderer.sprite = BGSprites[2];
+
             this.LoadLevel(this.CurrentLevel);
         }
     }
@@ -101,7 +123,14 @@ public class BricksManager : MonoBehaviour
                 if (brickType > 0)
                 {
                     Brick newBrick = Instantiate(brickPrefab, new Vector3(currentSpawnX, currentSpawnY, 0.0f - zShift), Quaternion.identity) as Brick;
-                    newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors[brickType], brickType);
+                    
+                    if(this.CurrentLevel < 5)
+                        newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors[brickType], brickType);
+                    else
+                        if(this.CurrentLevel < 10)
+                            newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors2[brickType], brickType);
+                        else
+                            newBrick.Init(bricksContainer.transform, this.Sprites[brickType - 1], this.BrickColors3[brickType], brickType);
 
                     this.RemainingBricks.Add(newBrick);
                     zShift += 0.0001f;
